@@ -6,6 +6,7 @@ from email.message import EmailMessage
 
 # to run the bash command
 import subprocess
+import os, time
 
 # Open the plain text file whose name is in textfile for reading.
 #with open() as fp:
@@ -35,7 +36,6 @@ msg['To'] = "michele.scarlato@gmail.com"
 command = 'df -i'
 temp = subprocess.Popen(command.split(), stdout=subprocess.PIPE)
 
-
 # we use the communicate function
 # to fetch the output
 output = str(temp.communicate())
@@ -44,38 +44,37 @@ output = str(temp.communicate())
 output = output.split("\n")
 output = output[0].split('\\')
 
- # a variable to store the output
-res = []
+for i in range(2):
+    time.sleep(150)
+    # a variable to store the output of ps aux
+    res = []
+    # iterate through the output
+    # line by line
+    for line in output:
+        res.append(line)
+    ps = subprocess.run(['ps', 'aux'], check=True, capture_output=True)
+    processNames = subprocess.run(['grep', 'python3 Debian_license_collector.py'],
+                                  input=ps.stdout, capture_output=True)
+    pid = str(processNames.stdout)
+    # pid = processNames.stdout.split("\n")
+    pid = pid.split()
+    pid = pid[1]
+    pid = int(pid)
 
-# iterate through the output
-# line by line
-for line in output:
-    res.append(line)
-ps = subprocess.run(['ps', 'aux'], check=True, capture_output=True)
-processNames = subprocess.run(['grep', 'python3 Debian_license_collector.py'],
-                              input=ps.stdout, capture_output=True)
-pid = str(processNames.stdout)
-#pid = processNames.stdout.split("\n")
-pid = pid.split()
-pid = pid[1]
-
-
-# print the output
-for i in range(1, len(res) - 1):
-    if "/dev/sda2" in res[i]:
-        print(res[i])
-        line = res[i].split()
-        line[4] = line[4].replace("%","")
-        line[4] = int(line[4])
-        if line[4] > 28:
-            # Send the message via our own SMTP server.
-            s = smtplib.SMTP('localhost')
-            s.send_message(msg)
-            s.quit()
-            print("Inodes issue")
-            print("Killing python3 Debian_license_collector.py with PID "+pid)
-            os.kill(pid, 9)
-
-
-        else:
-            print("Inodes ok")
+    # print the output
+    for i in range(1, len(res) - 1):
+        if "/dev/sda2" in res[i]:
+            print(res[i])
+            line = res[i].split()
+            line[4] = line[4].replace("%","")
+            line[4] = int(line[4])
+            if line[4] > 28:
+                # Send the message via our own SMTP server.
+                s = smtplib.SMTP('localhost')
+                s.send_message(msg)
+                s.quit()
+                print("Inodes issue")
+                print("Killing python3 Debian_license_collector.py with PID "+str(pid))
+                os.kill(pid, 9)
+            else:
+                print("Inodes ok")
