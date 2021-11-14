@@ -44,7 +44,7 @@ output = str(temp.communicate())
 output = output.split("\n")
 output = output[0].split('\\')
 
-for i in range(2):
+for i in range(3):
     time.sleep(150)
     # a variable to store the output of ps aux
     res = []
@@ -63,7 +63,7 @@ for i in range(2):
 
     # print the output
     for i in range(1, len(res) - 1):
-        if "/dev/sda2" in res[i]:
+        if "/dev/root" in res[i]:
             print(res[i])
             line = res[i].split()
             line[4] = line[4].replace("%","")
