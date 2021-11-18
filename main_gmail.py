@@ -3,14 +3,18 @@ import smtplib
 
 # Import the email modules we'll need
 from email.message import EmailMessage
+from dotenv import load_dotenv
 
 # to run the bash command
 import subprocess
 import os, time
 
 
-gmail_user = 'sender@gmail.com'
-gmail_password = 'xxxx'
+load_dotenv()
+
+
+gmail_user = os.getenv('GMAIL_USER')
+gmail_password = os.getenv('GMAIL_PASSWORD')
 
 commandHostname = 'hostname'
 tempHostname = subprocess.Popen(commandHostname.split(), stdout=subprocess.PIPE)
@@ -21,7 +25,7 @@ hostname = hostname[0].split('\\')
 
 
 sent_from = gmail_user
-to = ['recipient@gmail.com']
+to = [os.getenv('RECIPIENT')]#['recipient@gmail.com']
 subject = 'Inodes problem on '+hostname[0].replace("(b'","")
 body = 'Inodes warning ... and process killed.'
 
