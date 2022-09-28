@@ -68,7 +68,7 @@ for i in range(3):
             line = res[i].split()
             line[4] = line[4].replace("%","")
             line[4] = int(line[4])
-            if line[4] > 13:
+            if line[4] > 70:
                 # Send the message via our own SMTP server.
                 s = smtplib.SMTP('0.0.0.0')
                 s.send_message(msg)
